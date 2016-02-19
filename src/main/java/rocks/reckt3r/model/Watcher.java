@@ -65,6 +65,7 @@ public class Watcher {
         this.lastMessage = lastMessage;
     }
 
+
     public Date getLastSuccessAt() {
         return lastSuccessAt;
     }
