@@ -90,14 +90,22 @@ public class ListenerService {
                 if(listener.getStatus() == Status.OFFLINE) {
                     if((new Date()).getTime() - listener.getLastWarned().getTime() > 20 * 60 * 1000) {
                         sendErrorMessage(listener);
+                        listener.setStatus(Status.OFFLINE);
                         listener.setLastWarned(new Date());
                         listenerRepository.save(listener);
                     }
                 } else {
                     sendErrorMessage(listener);
+                    listener.setStatus(Status.OFFLINE);
                     listener.setLastWarned(new Date());
                     listenerRepository.save(listener);
-
+                }
+            } else {
+                if(listener.getStatus() == Status.OFFLINE) {
+                    sendIsOkAgainMessage(listener);
+                    listener.setStatus(Status.OFFLINE);
+                    listener.setLastWarned(new Date(0));
+                    listenerRepository.save(listener);
                 }
             }
         });

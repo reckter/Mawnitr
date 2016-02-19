@@ -115,19 +115,33 @@ public class BotListener implements CommandLineRunner{
             e.printStackTrace();
         }
         List<Watcher> watchers = watcherRepository.findAllByUser(user);
-        if(watchers.size() == 0) {
-            message.respond("No watchers yet.");
+        List<Listener> listeners = listenerRepository.findAllByUser(user);
+        if(watchers.size() == 0 && listeners.size() == 0) {
+            message.respond("No watchers/listeners yet.");
         } else {
             StringBuilder out = new StringBuilder();
-            watchers.forEach(watcher -> {
-                out.append(watcher.getName()).append(": ").append(watcher.getStatus().value());
-                if(watcher.getStatus() == Status.OFFLINE) {
-                    out.append(" last success ")
-                            .append((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000)
-                            .append("s ago");
-                }
-                out.append("\n");
-            });
+            if(watchers.size() > 0) {
+                out.append("watchers:\n");
+                watchers.forEach(watcher -> {
+                    out.append(watcher.getName()).append(": ").append(watcher.getStatus().value());
+                    if(watcher.getStatus() == Status.OFFLINE) {
+                        out.append(" last success ")
+                                .append((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000)
+                                .append("s ago");
+                    }
+                    out.append("\n");
+                });
+            }
+            if(listeners.size() > 0) {
+                listeners.forEach(listener -> {
+                    out.append(listener.getName()).append(": ").append(listener.getStatus().value())
+                    if(listener.getStatus() == Status.OFFLINE) {
+                        out.append(" last called ")
+                                .append((new Date().getTime() - listener.getLastCalled().getTime()) / 1000)
+                                .append("s ago");
+                    }
+                });
+            }
             message.respond(out.toString());
         }
     }
