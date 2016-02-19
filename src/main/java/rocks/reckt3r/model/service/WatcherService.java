@@ -44,12 +44,12 @@ public class WatcherService {
     UserService userService;
 
 
-    @OnCommand("set")
     public void set(Message message, List<String> arguments) {
         if(arguments.size() < 4) {
             message.reply("Not enough parameters. Please use /help for help.");
             return;
         }
+
         User user = userService.getOrCreate(message.chat.id);
 
         Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(2));

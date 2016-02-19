@@ -40,6 +40,23 @@ public class ListenerService {
     @Autowired
     Telegram telegram;
 
+
+    @OnCommand("token")
+    public void token(Message message, List<String> arguments) {
+        User user = userService.getOrCreate(message.chat.id);
+
+        if(arguments.size() < 2) {
+            message.reply("You need to suppl a listener name to create a new token for");
+        }
+
+        Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(1));
+        listener.setToken(UUID.randomUUID().toString().replace("-", ""));
+        listener = listenerRepository.save(listener);
+
+        message.respond("new url: " + getUrlForListener(listener));
+    }
+
+
     @OnCommand("listen")
     public void listener(Message message, List<String> arguments) {
         User user = userService.getOrCreate(message.chat.id);
@@ -123,5 +140,33 @@ public class ListenerService {
     private void sendIsOkAgainMessage(Listener listener) {
         telegram.sendMessage(listener.getUser().getTelegramId(), "==== Server ok again ====\n \n " + listener.getName() +
                 " is ok again was \n down for " + ((new Date().getTime() - listener.getLastCalled().getTime()) / 1000) + "s\n");
+    }
+
+    public void set(Message message, List<String> arguments) {
+        User user = userService.getOrCreate(message.chat.id);
+
+        Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(2));
+        if(listener == null) {
+            message.reply("Could not find Watcher " + arguments.get(2));
+            return;
+        }
+        switch(arguments.get(1)) {
+            case "name":
+                listener.setName(arguments.get(3));
+                break;
+            case "interval":
+                try {
+                    listener.setSecondsBetweenChecks(Integer.parseInt(arguments.get(3)) * 60);
+                } catch(IllegalArgumentException e) {
+                    message.respond("You must specify time in a number in minutes.");
+                    return;
+                }
+                break;
+            default:
+                message.reply("could not set the option " + arguments.get(1) + " because this option does not exist.");
+                return;
+        }
+        listener = listenerRepository.save(listener);
+        message.respond("Set " + arguments.get(1) + " to " + arguments.get(3) + " of watcher " + listener.getName());
     }
 }

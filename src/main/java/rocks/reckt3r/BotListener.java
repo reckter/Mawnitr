@@ -106,6 +106,27 @@ public class BotListener implements CommandLineRunner{
         message.respond(out);
     }
 
+
+
+    @OnCommand("set")
+    public void set(Message message, List<String> arguments) {
+        User user = userService.getOrCreate(message.chat.id);
+
+        if(arguments.size() < 4) {
+
+        }
+        Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(2));
+        Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(2));
+        if(watcher == null && listener == null) {
+            message.reply("You have no listener/watcher with the name " + arguments.get(2));
+        }
+        if(watcher != null) {
+            watcherService.set(message, arguments);
+        } else {
+            listenerService.set(message, arguments);
+        }
+    }
+
     @OnCommand("delete")
     public void delete(Message message, List<String> arguments) {
         User user = userService.getOrCreate(message.chat.id);
@@ -146,7 +167,7 @@ public class BotListener implements CommandLineRunner{
         } else {
             StringBuilder out = new StringBuilder();
             if(watchers.size() > 0) {
-                out.append("watchers:\n");
+                out.append("\nwatchers:\n");
                 watchers.forEach(watcher -> {
                     out.append(watcher.getName()).append(": ").append(watcher.getStatus().value());
                     if(watcher.getStatus() == Status.OFFLINE) {
@@ -158,6 +179,7 @@ public class BotListener implements CommandLineRunner{
                 });
             }
             if(listeners.size() > 0) {
+                out.append("\nlistener:\n");
                 listeners.forEach(listener -> {
                     out.append(listener.getName()).append(": ").append(listener.getStatus().value());
                     if(listener.getStatus() == Status.OFFLINE) {
