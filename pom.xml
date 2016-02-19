@@ -26,9 +26,8 @@
     <dependencies>
         <dependency>
             <groupId>me.reckter</groupId>
-            <artifactId>TelegramBotAPi</artifactId>
+            <artifactId>TelegramBotApi</artifactId>
             <version>0.5</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
