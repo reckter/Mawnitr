@@ -13,6 +13,7 @@ public class Listener {
     @GeneratedValue
     long id;
 
+    @OneToOne
     User user;
 
     String name;
