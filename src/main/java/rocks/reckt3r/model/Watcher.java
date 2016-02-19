@@ -60,7 +60,7 @@ public class Watcher {
 
     public void setLastMessage(String lastMessage) {
         if(lastMessage.length() > 500) {
-            lastMessage = lastMessage.substring(0, 500) + "...";
+            lastMessage = lastMessage.substring(0, 496) + "...";
         }
         this.lastMessage = lastMessage;
     }
