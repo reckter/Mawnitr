@@ -28,7 +28,7 @@ public class Main {
 
     @Bean
     public Telegram telegram() {
-        return new Telegram(BotListener.BOT_KEY, BotListener.ADMIN_ACC, BotListener.ERROR_BOT_KEY);
+        return new Telegram(System.getenv("BOT_KEY"), Integer.parseInt(System.getenv("ADMIN_ACC")), System.getenv("ERROR_BOT_KEY"));
     }
 
 

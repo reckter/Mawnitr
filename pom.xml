@@ -18,6 +18,32 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <profiles>
+        <profile>
+            <repositories>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>bintray-reckter-maven</id>
+                    <name>bintray</name>
+                    <url>http://dl.bintray.com/reckter/maven</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>bintray-reckter-maven</id>
+                    <name>bintray-plugins</name>
+                    <url>http://dl.bintray.com/reckter/maven</url>
+                </pluginRepository>
+            </pluginRepositories>
+            <id>bintray</id>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
