@@ -106,6 +106,31 @@ public class BotListener implements CommandLineRunner{
         message.respond(out);
     }
 
+    @OnCommand("delete")
+    public void delete(Message message, List<String> arguments) {
+        User user = userService.getOrCreate(message.chat.id);
+
+        if(arguments.size() < 2) {
+            message.reply("Please supply the name of the watcher/listener you want to delete.");
+            return;
+        }
+
+        Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(1));
+        Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(1));
+        if(watcher == null && listener == null) {
+            message.reply("Could not delete " + arguments.get(1) + " because there is no watcher/listener with this name");
+            return;
+        }
+        if(watcher != null) {
+            watcherRepository.delete(watcher);
+            message.respond("Watcher " + watcher.getName() + " deleted");
+        } else {
+            listenerRepository.delete(listener);
+            message.respond("listener " + listener.getName() + " deleted");
+        }
+    }
+
+
     @OnCommand({"list", "status"})
     public void list(Message message, List<String> arguments) {
         User user = null;
@@ -134,7 +159,7 @@ public class BotListener implements CommandLineRunner{
             }
             if(listeners.size() > 0) {
                 listeners.forEach(listener -> {
-                    out.append(listener.getName()).append(": ").append(listener.getStatus().value())
+                    out.append(listener.getName()).append(": ").append(listener.getStatus().value());
                     if(listener.getStatus() == Status.OFFLINE) {
                         out.append(" last called ")
                                 .append((new Date().getTime() - listener.getLastCalled().getTime()) / 1000)

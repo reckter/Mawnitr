@@ -43,23 +43,6 @@ public class WatcherService {
     @Autowired
     UserService userService;
 
-    @OnCommand("delete")
-    public void deleteWatcher(Message message, List<String> arguments) {
-        User user = userService.getOrCreate(message.chat.id);
-
-        if(arguments.size() < 2) {
-            message.reply("Please supply the name of the watcher you want to delete.");
-            return;
-        }
-
-        Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(1));
-        if(watcher == null) {
-            message.reply("Could not delete " + arguments.get(1) + " because there is no watcher with this name");
-            return;
-        }
-        watcherRepository.delete(watcher);
-        message.respond("Watcher " + watcher.getName() + " deleted");
-    }
 
     @OnCommand("set")
     public void set(Message message, List<String> arguments) {
