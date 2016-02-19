@@ -8,14 +8,14 @@ import java.util.Objects;
 /**
  * Created by hannes on 18.02.16.
  */
-public enum WatcherStatus {
+public enum Status {
     ONLINE("online"),
     OFFLINE("offline");
 
 
 
     String value;
-    WatcherStatus(String value) {
+    Status(String value) {
         this.value = value;
     }
 
@@ -25,13 +25,13 @@ public enum WatcherStatus {
     }
 
     @JsonCreator
-    public static WatcherStatus fromValue(String value) {
-        for(WatcherStatus at : WatcherStatus.values()) {
+    public static Status fromValue(String value) {
+        for(Status at : Status.values()) {
             if(Objects.equals(at.value(), value)) {
                 return at;
             }
         }
 
-        throw new IllegalArgumentException("Can't deserialize WatcherStatus with value '" + value + "'");
+        throw new IllegalArgumentException("Can't deserialize Status with value '" + value + "'");
     }
 }

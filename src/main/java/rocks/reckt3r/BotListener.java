@@ -6,9 +6,9 @@ import me.reckter.telegram.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
+import rocks.reckt3r.model.Status;
 import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.Watcher;
-import rocks.reckt3r.model.WatcherStatus;
 import rocks.reckt3r.model.repository.WatcherRepository;
 import rocks.reckt3r.model.service.UserService;
 import rocks.reckt3r.model.service.WatcherService;
@@ -75,7 +75,7 @@ public class BotListener implements CommandLineRunner{
             StringBuilder out = new StringBuilder();
             watchers.forEach(watcher -> {
                 out.append(watcher.getName()).append(": ").append(watcher.getStatus().value());
-                if(watcher.getStatus() == WatcherStatus.OFFLINE) {
+                if(watcher.getStatus() == Status.OFFLINE) {
                     out.append(" last success ")
                             .append((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000)
                             .append("s ago");

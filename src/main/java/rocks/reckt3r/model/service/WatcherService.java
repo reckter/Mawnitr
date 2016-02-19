@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.HttpStatusCodeException;
+import rocks.reckt3r.model.Status;
 import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.Watcher;
-import rocks.reckt3r.model.WatcherStatus;
 import rocks.reckt3r.model.repository.WatcherRepository;
 
 import java.net.ConnectException;
@@ -151,6 +151,7 @@ public class WatcherService {
         } else {
             watcherRepository.findAllByUser(user).forEach(this::checkWatcher);
         }
+        message.respond("Checking in Progress.");
 
     }
 
@@ -175,7 +176,7 @@ public class WatcherService {
 
             watcher.setName(arguments.get(1));
             watcher.setUrlToWatch(new URL(arguments.get(2)));
-            watcher.setStatus(WatcherStatus.ONLINE);
+            watcher.setStatus(Status.ONLINE);
 
             if(arguments.size() > 3) {
                 String statusCodeString = arguments.get(3);
@@ -232,7 +233,7 @@ public class WatcherService {
 
                 finalWatcher.setLastChecked(new Date());
                 finalWatcher.setLastMessage("Timeout");
-                finalWatcher.setStatus(WatcherStatus.OFFLINE);
+                finalWatcher.setStatus(Status.OFFLINE);
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
 
@@ -245,7 +246,7 @@ public class WatcherService {
 
 
     private void sendErrorMessage(Watcher watcher) {
-        if(new Date().getTime() - watcher.getLastSuccessAt().getTime() > 20 * 60 * 1000 || watcher.getStatus() == WatcherStatus.ONLINE) {
+        if(new Date().getTime() - watcher.getLastSuccessAt().getTime() > 20 * 60 * 1000 || watcher.getStatus() == Status.ONLINE) {
             telegram.sendMessage(watcher.getUser().getTelegramId(), "==== Server down ==== \n \nGot an error while checking " + watcher.getName() + "\n" +
                     "last successfull message: " + ((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000) + "s ago \n" +
                     watcher.getLastMessage());
@@ -263,14 +264,14 @@ public class WatcherService {
         watcher.setLastMessage(code + "\n body: " + body);
 
         if(code == watcher.getExpectedStatus()) {
-            if(watcher.getStatus() == WatcherStatus.OFFLINE) {
+            if(watcher.getStatus() == Status.OFFLINE) {
                 sendIsOkAgainMessage(watcher);
             }
             watcher.setLastSuccessAt(watcher.getLastChecked());
-            watcher.setStatus(WatcherStatus.ONLINE);
+            watcher.setStatus(Status.ONLINE);
         } else {
             sendErrorMessage(watcher);
-            watcher.setStatus(WatcherStatus.OFFLINE);
+            watcher.setStatus(Status.OFFLINE);
         }
 
         watcherRepository.save(watcher);

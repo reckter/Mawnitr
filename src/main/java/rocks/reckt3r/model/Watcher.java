@@ -1,6 +1,5 @@
 package rocks.reckt3r.model;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
@@ -35,14 +34,14 @@ public class Watcher {
     @Column(length = 500)
     String lastMessage;
 
-    WatcherStatus status;
+    Status status;
 
 
-    public WatcherStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(WatcherStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
