@@ -94,15 +94,23 @@ public class BotListener implements CommandLineRunner{
         String out = "This is a Server Mawnitr.\n" +
                 "It mawnitrs your servers.\n\n" +
                 "commands:\n" +
-                "/status - shows the status of all your watchers \n" +
-                "/watch <name> <url> [status] - adds a new watcher. I will watch the url for uptime.\n" +
+                "/status - shows the status of all your watchers and listeners\n\n" +
+                "watcher commands:\n" +
+                "/watch <name> <url> - adds a new watcher. I will watch the url for uptime.\n" +
                 "/detail <name> - shows the details of one watcher\n" +
                 "/delete <name> - deletes a watcher\n" +
                 "/set_url <name> <url> - set the url of a watcher\n" +
                 "/set_name <name> <newName> - set the name of a watcher\n" +
-                "/set_interval <name> <interval> - sets the Interval of a watcher (in Minutes!)\n" +
+                "/set_interval <name> <interval> - sets the Interval of a watcher (in minutes!)\n" +
                 "/set_status <name> <statusCode> - set the Status code to expect of a watcher\n" +
-                "/check <name> - checks the given watcher manually\n";
+                "/check <name> - checks the given watcher manually\n˜n" +
+                "listner commands:\n" +
+                "/listen <name>  - adds a new listener. I will expect a GET request to the url in every interval.\n" +
+                "/detail <name> - shows the details of one listener\n" +
+                "/delete <name> - deletes a listener\n" +
+                "/set_name <name> <newName> - set the name of a listener\n" +
+                "/set_interval <name> <interval> - sets the Interval of a listener (in minutes!)\n" +
+                "/token <name> - creates a new token for a listener\n";
         message.respond(out);
     }
 
@@ -173,7 +181,7 @@ public class BotListener implements CommandLineRunner{
                     if(watcher.getStatus() == Status.OFFLINE) {
                         out.append(" last success ")
                                 .append((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000)
-                                .append("s ago");
+                                .append("s ago\n");
                     }
                     out.append("\n");
                 });
@@ -185,7 +193,7 @@ public class BotListener implements CommandLineRunner{
                     if(listener.getStatus() == Status.OFFLINE) {
                         out.append(" last called ")
                                 .append((new Date().getTime() - listener.getLastCalled().getTime()) / 1000)
-                                .append("s ago");
+                                .append("s ago\n");
                     }
                 });
             }

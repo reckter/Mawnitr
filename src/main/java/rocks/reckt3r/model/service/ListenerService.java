@@ -152,6 +152,11 @@ public class ListenerService {
         }
         switch(arguments.get(1)) {
             case "name":
+                if(watcherRepository.findOneByUserAndName(user, arguments.get(3)) != null &&
+                        listenerRepository.findOneByUserAndName(user, arguments.get(3)) != null     ) {
+                    message.reply("You allready have a listener/watcher with that name.");
+                    return;
+                }
                 listener.setName(arguments.get(3));
                 break;
             case "interval":
