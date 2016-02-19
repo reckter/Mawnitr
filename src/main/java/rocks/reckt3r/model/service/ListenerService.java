@@ -13,6 +13,7 @@ import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.Watcher;
 import rocks.reckt3r.model.repository.ListenerRepository;
 import rocks.reckt3r.model.repository.UserRepository;
+import rocks.reckt3r.model.repository.WatcherRepository;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,11 +32,13 @@ public class ListenerService {
     ListenerRepository listenerRepository;
 
     @Autowired
+    WatcherRepository watcherRepository;
+
+    @Autowired
     UserService userService;
 
     @Autowired
     Telegram telegram;
-
 
     @OnCommand("listen")
     public void listener(Message message, List<String> arguments) {
@@ -47,8 +50,13 @@ public class ListenerService {
         }
 
         Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(1));
+        Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(1));
         if(listener != null) {
             message.respond("You already have a listener with that name. Please choose another name.");
+            return;
+        }
+        if(watcher != null) {
+            message.respond("You already have a watcher with that name. Please choose another name.");
             return;
         }
 
@@ -71,7 +79,7 @@ public class ListenerService {
     }
 
 
-    private String getUrlForListener(Listener listener) {
+    public String getUrlForListener(Listener listener) {
         return "http://reckt3r.rocks/listen/" + listener.getToken();
     }
 
@@ -83,13 +91,18 @@ public class ListenerService {
                     if((new Date()).getTime() - listener.getLastWarned().getTime() > 20 * 60 * 1000) {
                         sendErrorMessage(listener);
                         listener.setLastWarned(new Date());
+                        listenerRepository.save(listener);
                     }
                 } else {
                     sendErrorMessage(listener);
                     listener.setLastWarned(new Date());
+                    listenerRepository.save(listener);
+
                 }
             }
         });
+
+
     }
 
 

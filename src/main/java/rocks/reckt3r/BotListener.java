@@ -6,9 +6,11 @@ import me.reckter.telegram.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
+import rocks.reckt3r.model.Listener;
 import rocks.reckt3r.model.Status;
 import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.Watcher;
+import rocks.reckt3r.model.repository.ListenerRepository;
 import rocks.reckt3r.model.repository.WatcherRepository;
 import rocks.reckt3r.model.service.ListenerService;
 import rocks.reckt3r.model.service.UserService;
@@ -34,6 +36,9 @@ public class BotListener implements CommandLineRunner{
     WatcherService watcherService;
 
     @Autowired
+    ListenerRepository listenerRepository;
+
+    @Autowired
     ListenerService listenerService;
 
 
@@ -47,6 +52,42 @@ public class BotListener implements CommandLineRunner{
         telegram.addListener(listenerService);
     }
 
+
+    @OnCommand("detail")
+    public void details(Message message, List<String> arguments) {
+        User user = userService.getOrCreate(message.chat.id);
+
+        if(arguments.size() < 2) {
+            message.reply("You must specify which watcher/listener you want details about.");
+            return;
+        }
+
+        Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(1));
+        Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(1));
+        if(watcher == null && listener == null) {
+            message.reply("Could not find Watcher/listener " + arguments.get(1));
+            return;
+        }
+
+        String out;
+        if(watcher != null) {
+            out = "watcher: " + watcher.getName() + "\n" +
+                    "Status: " + watcher.getStatus().value() + "\n" +
+                    "url: " + watcher.getUrlToWatch() + "\n" +
+                    "HTTP Status to expect: " + watcher.getExpectedStatus().value() + "\n" +
+                    "Checking interval: " + watcher.getSecondsBetweenChecks() / 60 + "m\n" +
+                    "last success: " + ((new Date()).getTime() - watcher.getLastSuccessAt().getTime()) / 1000 + "s ago.\n" +
+                    "message: " + watcher.getLastMessage();
+        } else {
+            out = "listener; " + listener.getName() + "\n" +
+                    "Status: " + listener.getStatus().value() + "\n" +
+                    "url: " + listenerService.getUrlForListener(listener)  + "\n" +
+                    "Checking interval: " + listener.getSecondsBetweenChecks() / 60 + "m\n" +
+                    "last success: " + ((new Date()).getTime() - listener.getLastCalled().getTime()) / 1000 + "s ago.\n" +
+                    "message: " + listener.getLastMessage();
+        }
+        message.respond(out);
+    }
 
     @OnCommand({"start", "help"})
     public void help(Message message, List<String> arguments) {

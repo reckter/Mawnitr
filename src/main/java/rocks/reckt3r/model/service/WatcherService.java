@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.HttpStatusCodeException;
+import rocks.reckt3r.model.Listener;
 import rocks.reckt3r.model.Status;
 import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.Watcher;
+import rocks.reckt3r.model.repository.ListenerRepository;
 import rocks.reckt3r.model.repository.WatcherRepository;
 
 import java.net.ConnectException;
@@ -32,6 +34,8 @@ public class WatcherService {
     @Autowired
     WatcherRepository watcherRepository;
 
+    @Autowired
+    ListenerRepository listenerRepository;
 
     @Autowired
     Telegram telegram;
@@ -55,31 +59,6 @@ public class WatcherService {
         }
         watcherRepository.delete(watcher);
         message.respond("Watcher " + watcher.getName() + " deleted");
-    }
-
-    @OnCommand("detail")
-    public void details(Message message, List<String> arguments) {
-        User user = userService.getOrCreate(message.chat.id);
-
-        if(arguments.size() < 2) {
-            message.reply("You must specify which watcher you want details about.");
-            return;
-        }
-
-        Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(1));
-        if(watcher == null) {
-            message.reply("Could not find Watcher " + arguments.get(1));
-            return;
-        }
-
-        String out = watcher.getName() + "\n" +
-                "Status: " + watcher.getStatus().value() + "\n" +
-                "url: " + watcher.getUrlToWatch() + "\n" +
-                "HTTP Status to expect: " + watcher.getExpectedStatus().value() + "\n" +
-                "Checking interval: " + watcher.getSecondsBetweenChecks() / 60 + "m\n" +
-                "last success: " + ((new Date()).getTime() - watcher.getLastSuccessAt().getTime()) / 1000 + "s ago.\n" +
-                "message: " + watcher.getLastMessage();
-        message.respond(out);
     }
 
     @OnCommand("set")
@@ -164,7 +143,12 @@ public class WatcherService {
             return;
         }
 
+        Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(1));
         Watcher watcher = watcherRepository.findOneByUserAndName(user, arguments.get(1));
+        if(listener != null) {
+            message.respond("You already have a listener with that name. Please choose another name.");
+            return;
+        }
         if(watcher != null) {
             message.respond("You already have a watcher with that name. Please choose another name.");
             return;
