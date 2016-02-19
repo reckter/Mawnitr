@@ -1,6 +1,5 @@
 package rocks.reckt3r;
 
-import me.reckter.telegram.Telegram;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
