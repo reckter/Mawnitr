@@ -41,7 +41,7 @@ public class ListenerService {
     public void listener(Message message, List<String> arguments) {
         User user = userService.getOrCreate(message.chat.id);
 
-        if(arguments.size() < 3) {
+        if(arguments.size() < 2) {
             message.respond("You need to supply at least to arguments! See /help for help");
             return;
         }
