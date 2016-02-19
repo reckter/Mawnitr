@@ -1,11 +1,9 @@
 package rocks.reckt3r.model;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.net.URL;
 import java.util.Date;
 
@@ -34,6 +32,7 @@ public class Watcher {
 
     Date lastSuccessAt;
 
+    @Column(length = 500)
     String lastMessage;
 
     WatcherStatus status;
@@ -60,6 +59,9 @@ public class Watcher {
     }
 
     public void setLastMessage(String lastMessage) {
+        if(lastMessage.length() > 500) {
+            lastMessage = lastMessage.substring(0, 500) + "...";
+        }
         this.lastMessage = lastMessage;
     }
 
