@@ -2,11 +2,13 @@ package rocks.reckt3r.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by hannes on 18.02.16.
  */
 @Entity
+@Table(name = "mawnitr_user")
 public class User {
 
     @Id

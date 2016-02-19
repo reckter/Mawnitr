@@ -28,9 +28,9 @@ public class DataSourceConfig {
             // set the environment variable in your runner using the same format as
             // below
             if(environment.acceptsProfiles("TEST")) {
-                url = "postgres://postgres:password@localhost:5432/rms4csw_test";
+                url = "postgres://postgres:password@localhost:5432/mawnitr_test";
             } else {
-                url = "postgres://postgres:password@localhost:5432/rms4csw";
+                url = "postgres://postgres:password@localhost:5432/mawnitr";
             }
         }
 
