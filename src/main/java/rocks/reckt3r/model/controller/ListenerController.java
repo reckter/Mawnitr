@@ -15,7 +15,8 @@ import java.util.Date;
 /**
  * Created by hannes on 19.02.16.
  */
-@RestController("/listen")
+@RestController()
+@RequestMapping("/listen")
 public class ListenerController {
 
     @Autowired
