@@ -23,11 +23,6 @@ import java.util.List;
 public class BotListener implements CommandLineRunner{
 
 
-    public static int ADMIN_ACC = 71580123;
-    public static String BOT_KEY = "199467307:AAFJPJrS7DhTwAQDcn6FlccWLx1OWAgoqW8";
-    public static String ERROR_BOT_KEY = "162555530:AAHaBtkJd2XdNvyRpDa8CzvnJFe-gayf0zw";
-
-
     @Autowired
     UserService userService;
 
