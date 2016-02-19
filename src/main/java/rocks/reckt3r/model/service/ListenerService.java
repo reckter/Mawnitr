@@ -37,7 +37,7 @@ public class ListenerService {
     Telegram telegram;
 
 
-    @OnCommand("listener")
+    @OnCommand("listen")
     public void listener(Message message, List<String> arguments) {
         User user = userService.getOrCreate(message.chat.id);
 

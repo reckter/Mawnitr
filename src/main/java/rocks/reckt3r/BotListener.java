@@ -10,6 +10,7 @@ import rocks.reckt3r.model.Status;
 import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.Watcher;
 import rocks.reckt3r.model.repository.WatcherRepository;
+import rocks.reckt3r.model.service.ListenerService;
 import rocks.reckt3r.model.service.UserService;
 import rocks.reckt3r.model.service.WatcherService;
 
@@ -32,6 +33,9 @@ public class BotListener implements CommandLineRunner{
     @Autowired
     WatcherService watcherService;
 
+    @Autowired
+    ListenerService listenerService;
+
 
     @Autowired
     Telegram telegram;
@@ -40,6 +44,7 @@ public class BotListener implements CommandLineRunner{
     public void run(String... args) throws Exception {
         telegram.addListener(this);
         telegram.addListener(watcherService);
+        telegram.addListener(listenerService);
     }
 
 
