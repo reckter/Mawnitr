@@ -97,7 +97,7 @@ public class ListenerService {
 
 
     public String getUrlForListener(Listener listener) {
-        return "http://reckt3r.rocks/listen/" + listener.getToken();
+        return System.getenv("URL_BASE") + ":" + System.getenv("server.port") + "/listen/" + listener.getToken();
     }
 
     @Scheduled(initialDelay = 10 * 1000, fixedDelay = 10 * 1000)
