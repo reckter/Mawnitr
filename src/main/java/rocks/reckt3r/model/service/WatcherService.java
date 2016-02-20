@@ -67,7 +67,7 @@ public class WatcherService {
                 }
                 break;
             case "name":
-                if(watcherRepository.findOneByUserAndName(user, arguments.get(3)) != null &&
+                if(watcherRepository.findOneByUserAndName(user, arguments.get(3)) != null ||
                     listenerRepository.findOneByUserAndName(user, arguments.get(3)) != null     ) {
                     message.reply("You allready have a listener/watcher with that name.");
                     return;

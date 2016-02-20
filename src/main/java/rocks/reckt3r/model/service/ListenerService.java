@@ -147,14 +147,14 @@ public class ListenerService {
 
         Listener listener = listenerRepository.findOneByUserAndName(user, arguments.get(2));
         if(listener == null) {
-            message.reply("Could not find Watcher " + arguments.get(2));
+            message.reply("Could not find listener " + arguments.get(2));
             return;
         }
         switch(arguments.get(1)) {
             case "name":
-                if(watcherRepository.findOneByUserAndName(user, arguments.get(3)) != null &&
+                if(watcherRepository.findOneByUserAndName(user, arguments.get(3)) != null ||
                         listenerRepository.findOneByUserAndName(user, arguments.get(3)) != null     ) {
-                    message.reply("You allready have a listener/watcher with that name.");
+                    message.reply("You already have a listener/watcher with that name.");
                     return;
                 }
                 listener.setName(arguments.get(3));
@@ -172,6 +172,6 @@ public class ListenerService {
                 return;
         }
         listener = listenerRepository.save(listener);
-        message.respond("Set " + arguments.get(1) + " to " + arguments.get(3) + " of watcher " + listener.getName());
+        message.respond("Set " + arguments.get(1) + " to " + arguments.get(3) + " of listener " + listener.getName());
     }
 }
