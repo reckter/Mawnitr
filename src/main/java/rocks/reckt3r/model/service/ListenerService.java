@@ -41,10 +41,6 @@ public class ListenerService {
     @Autowired
     Telegram telegram;
 
-    @Value("${server.port}")
-    String port;
-
-
     @OnCommand("token")
     public void token(Message message, List<String> arguments) {
         User user = userService.getOrCreate(message.chat.id);
@@ -101,7 +97,7 @@ public class ListenerService {
 
 
     public String getUrlForListener(Listener listener) {
-        return System.getenv("URL_BASE") + ":" + port + "/listen/" + listener.getToken();
+        return System.getenv("URL_BASE") + "/listen/" + listener.getToken();
     }
 
     @Scheduled(initialDelay = 10 * 1000, fixedDelay = 10 * 1000)
@@ -124,7 +120,7 @@ public class ListenerService {
             } else {
                 if(listener.getStatus() == Status.OFFLINE) {
                     sendIsOkAgainMessage(listener);
-                    listener.setStatus(Status.OFFLINE);
+                    listener.setStatus(Status.ONLINE);
                     listener.setLastWarned(new Date(0));
                     listenerRepository.save(listener);
                 }
@@ -136,14 +132,14 @@ public class ListenerService {
 
 
     private void sendErrorMessage(Listener listener) {
-        telegram.sendMessage(listener.getUser().getTelegramId(), "==== Server down ==== \n \nGot an error while checking " + listener.getName() + "\n" +
+        telegram.sendMessage(listener.getUser().getTelegramId(), "==== Server down ==== \n \n" + listener.getName() + "\n" +
                 "last successfull message: " + ((new Date().getTime() - listener.getLastCalled().getTime()) / 1000) + "s ago \n" +
                 listener.getLastMessage());
     }
 
     private void sendIsOkAgainMessage(Listener listener) {
         telegram.sendMessage(listener.getUser().getTelegramId(), "==== Server ok again ====\n \n " + listener.getName() +
-                " is ok again was \n down for " + ((new Date().getTime() - listener.getLastCalled().getTime()) / 1000) + "s\n");
+                " is ok again \n was down for " + ((new Date().getTime() - listener.getLastCalled().getTime()) / 1000) + "s\n");
     }
 
     public void set(Message message, List<String> arguments) {
