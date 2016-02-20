@@ -4,6 +4,7 @@ import me.reckter.telegram.Telegram;
 import me.reckter.telegram.listener.OnCommand;
 import me.reckter.telegram.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,9 @@ public class ListenerService {
 
     @Autowired
     Telegram telegram;
+
+    @Value("${server.port}")
+    String port;
 
 
     @OnCommand("token")
@@ -97,7 +101,7 @@ public class ListenerService {
 
 
     public String getUrlForListener(Listener listener) {
-        return System.getenv("URL_BASE") + ":" + System.getenv("server.port") + "/listen/" + listener.getToken();
+        return System.getenv("URL_BASE") + ":" + port + "/listen/" + listener.getToken();
     }
 
     @Scheduled(initialDelay = 10 * 1000, fixedDelay = 10 * 1000)
