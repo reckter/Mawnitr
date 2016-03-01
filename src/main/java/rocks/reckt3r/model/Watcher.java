@@ -25,6 +25,8 @@ public class Watcher {
 
     Date lastChecked;
 
+    Date lastWarned;
+
     long secondsBetweenChecks;
 
     HttpStatus expectedStatus;
@@ -119,5 +121,13 @@ public class Watcher {
 
     public void setSecondsBetweenChecks(long secondsBetweenChecks) {
         this.secondsBetweenChecks = secondsBetweenChecks;
+    }
+
+    public Date getLastWarned() {
+        return lastWarned;
+    }
+
+    public void setLastWarned(Date lastWarned) {
+        this.lastWarned = lastWarned;
     }
 }

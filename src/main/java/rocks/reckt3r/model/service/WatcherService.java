@@ -218,7 +218,8 @@ public class WatcherService {
 
 
     private void sendErrorMessage(Watcher watcher) {
-        if(new Date().getTime() - watcher.getLastSuccessAt().getTime() > 20 * 60 * 1000 || watcher.getStatus() == Status.ONLINE) {
+        if(new Date().getTime() - watcher.getLastWarned().getTime() > 20 * 60 * 1000 || watcher.getStatus() == Status.ONLINE) {
+            watcher.setLastWarned(new Date());
             telegram.sendMessage(watcher.getUser().getTelegramId(), "==== Server down ==== \n \nGot an error while checking " + watcher.getName() + "\n" +
                     "last successfull message: " + ((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000) + "s ago \n" +
                     watcher.getLastMessage());
@@ -226,6 +227,7 @@ public class WatcherService {
     }
 
     private void sendIsOkAgainMessage(Watcher watcher) {
+        watcher.setLastWarned(new Date(0));
         telegram.sendMessage(watcher.getUser().getTelegramId(), "==== Server ok again ====\n \n " + watcher.getName() +
                 " is ok again was \n down for " + ((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000) + "s\n");
     }
