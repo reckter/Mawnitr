@@ -219,6 +219,9 @@ public class WatcherService {
 
 
     private void sendErrorMessage(Watcher watcher) {
+        if(watcher.getLastWarned() == null) {
+            watcher.setLastWarned(new Date(0));
+        }
         if(new Date().getTime() - watcher.getLastWarned().getTime() > 20 * 60 * 1000 || watcher.getStatus() == Status.ONLINE) {
             watcher.setLastWarned(new Date());
             telegram.sendMessage(watcher.getUser().getTelegramId(), "==== Server down ==== \n \nGot an error while checking " + watcher.getName() + "\n" +
