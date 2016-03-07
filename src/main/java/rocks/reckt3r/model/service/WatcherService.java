@@ -210,7 +210,8 @@ public class WatcherService {
                 watcherRepository.save(finalWatcher);
 
             } else {
-                telegram.sendMessage(finalWatcher.getUser().getTelegramId(), "Got an error trying to check " + finalWatcher.getName() + ": \n " + ex.getMessage());
+                telegram.sendMessage(finalWatcher.getUser().getTelegramId(), "Got an error trying to check " + finalWatcher.getName() + ": \n "
+                        + ex.getClass().getName() + ": " + ex.getMessage());
             }
         });
 
