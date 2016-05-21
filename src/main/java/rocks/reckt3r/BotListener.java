@@ -18,12 +18,13 @@ import rocks.reckt3r.model.service.WatcherService;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by hannes on 18.02.16.
  */
 @Service
-public class BotListener implements CommandLineRunner{
+public class BotListener implements CommandLineRunner {
 
 
     @Autowired
@@ -81,7 +82,7 @@ public class BotListener implements CommandLineRunner{
         } else {
             out = "listener; " + listener.getName() + "\n" +
                     "Status: " + listener.getStatus().value() + "\n" +
-                    "url: " + listenerService.getUrlForListener(listener)  + "\n" +
+                    "url: " + listenerService.getUrlForListener(listener) + "\n" +
                     "Checking interval: " + listener.getSecondsBetweenChecks() / 60 + "m\n" +
                     "last success: " + ((new Date()).getTime() - listener.getLastCalled().getTime()) / 1000 + "s ago.\n" +
                     "message: " + listener.getLastMessage();
@@ -113,7 +114,6 @@ public class BotListener implements CommandLineRunner{
                 "/token <name> - creates a new token for a listener\n";
         message.respond(out);
     }
-
 
 
     @OnCommand("set")
@@ -198,6 +198,14 @@ public class BotListener implements CommandLineRunner{
                 });
             }
             message.respond(out.toString());
+        }
+    }
+
+    @OnCommand("alert")
+    public void alert(Message message, List<String> arguments) {
+        if(message.chat.id == Integer.parseInt(System.getenv("ADMIN_ACC"))) {
+            String text = arguments.subList(1, arguments.size()).stream().collect(Collectors.joining(" "));
+            message.respond(text);
         }
     }
 
