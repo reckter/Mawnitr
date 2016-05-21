@@ -27,7 +27,7 @@
         <dependency>
             <groupId>me.reckter</groupId>
             <artifactId>TelegramBotApi</artifactId>
-            <version>LATEST</version>
+            <version>0.5</version>
         </dependency>
 
         <dependency>

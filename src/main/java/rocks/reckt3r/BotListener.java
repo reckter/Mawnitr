@@ -205,7 +205,7 @@ public class BotListener implements CommandLineRunner {
     public void alert(Message message, List<String> arguments) {
         if(message.chat.id == Integer.parseInt(System.getenv("ADMIN_ACC"))) {
             String text = arguments.subList(1, arguments.size()).stream().collect(Collectors.joining(" "));
-            message.respond(text);
+            userService.findAll().forEach(user -> telegram.sendMessage(user.getTelegramId(), text));
         }
     }
 

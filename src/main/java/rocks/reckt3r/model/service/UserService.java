@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import rocks.reckt3r.model.User;
 import rocks.reckt3r.model.repository.UserRepository;
 
+import java.util.List;
+
 /**
  * Created by hannes on 18.02.16.
  */
@@ -24,5 +26,9 @@ public class UserService {
             user = userRepository.save(user);
         }
         return user;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 }
