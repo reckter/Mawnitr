@@ -4,7 +4,10 @@ import me.reckter.telegram.Telegram;
 import me.reckter.telegram.listener.OnCommand;
 import me.reckter.telegram.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -17,6 +20,7 @@ import rocks.reckt3r.model.Watcher;
 import rocks.reckt3r.model.repository.ListenerRepository;
 import rocks.reckt3r.model.repository.WatcherRepository;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -84,8 +88,10 @@ public class WatcherService {
                 }
                 break;
             case "interval":
+                //noinspection Duplicates
                 try {
                     watcher.setSecondsBetweenChecks(Integer.parseInt(arguments.get(3)) * 60);
+                    arguments.set(3, arguments.get(3) + " minutes");
                 } catch(IllegalArgumentException e) {
                     message.respond("You must specify time in a number in minutes.");
                     return;
@@ -209,9 +215,19 @@ public class WatcherService {
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
 
+            } else if(ex instanceof SSLHandshakeException) {
+                finalWatcher.setLastChecked((new Date()));
+                finalWatcher.setLastMessage("SSL certificat error. Check Your SSL certificat.");
+                finalWatcher.setStatus(Status.OFFLINE);
+                sendErrorMessage(finalWatcher);
+                watcherRepository.save(finalWatcher);
             } else {
-                telegram.sendMessage(finalWatcher.getUser().getTelegramId(), "Got an error trying to check " + finalWatcher.getName() + ": \n "
-                        + ex.getClass().getName() + ": " + ex.getMessage());
+
+                finalWatcher.setLastChecked((new Date()));
+                finalWatcher.setLastMessage(ex.getMessage());
+                finalWatcher.setStatus(Status.OFFLINE);
+                sendErrorMessage(finalWatcher);
+                watcherRepository.save(finalWatcher);
             }
         });
 

@@ -104,7 +104,7 @@ public class BotListener implements CommandLineRunner {
                 "/set_name <name> <newName> - set the name of a watcher\n" +
                 "/set_interval <name> <interval> - sets the Interval of a watcher (in minutes!)\n" +
                 "/set_status <name> <statusCode> - set the Status code to expect of a watcher\n" +
-                "/check <name> - checks the given watcher manually\n˜n" +
+                "/check <name> - checks the given watcher manually\n\n" +
                 "listner commands:\n" +
                 "/listen <name>  - adds a new listener. I will expect a GET request to the url in every interval.\n" +
                 "/detail <name> - shows the details of one listener\n" +

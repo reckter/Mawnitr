@@ -160,8 +160,10 @@ public class ListenerService {
                 listener.setName(arguments.get(3));
                 break;
             case "interval":
+                //noinspection Duplicates
                 try {
                     listener.setSecondsBetweenChecks(Integer.parseInt(arguments.get(3)) * 60);
+                    arguments.set(3, arguments.get(3) + " minutes");
                 } catch(IllegalArgumentException e) {
                     message.respond("You must specify time in a number in minutes.");
                     return;
