@@ -217,14 +217,14 @@ public class WatcherService {
 
             } else if(ex instanceof SSLHandshakeException) {
                 finalWatcher.setLastChecked((new Date()));
-                finalWatcher.setLastMessage("SSL certificat error. Check Your SSL certificat.");
+                finalWatcher.setLastMessage("SSL certificate error. Check Your SSL certificate: " + ex.getMessage());
                 finalWatcher.setStatus(Status.OFFLINE);
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
             } else {
 
                 finalWatcher.setLastChecked((new Date()));
-                finalWatcher.setLastMessage(ex.getMessage());
+                finalWatcher.setLastMessage(ex.getClass().getSimpleName() + ": " + ex.getMessage());
                 finalWatcher.setStatus(Status.OFFLINE);
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
