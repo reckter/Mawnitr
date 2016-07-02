@@ -261,6 +261,7 @@ public class WatcherService {
         watcher.setLastMessage(code + "\n body: " + body);
 
         if(code == watcher.getExpectedStatus()) {
+            watcher.setTimesFailed(0);
             if(watcher.getStatus() == Status.OFFLINE) {
                 sendIsOkAgainMessage(watcher);
             }
