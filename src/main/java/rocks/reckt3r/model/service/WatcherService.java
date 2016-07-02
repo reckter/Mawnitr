@@ -72,7 +72,7 @@ public class WatcherService {
                 break;
             case "name":
                 if(watcherRepository.findOneByUserAndName(user, arguments.get(3)) != null ||
-                    listenerRepository.findOneByUserAndName(user, arguments.get(3)) != null     ) {
+                        listenerRepository.findOneByUserAndName(user, arguments.get(3)) != null) {
                     message.reply("You allready have a listener/watcher with that name.");
                     return;
                 }
@@ -101,7 +101,7 @@ public class WatcherService {
                 message.reply("could not set the option " + arguments.get(1) + " because this option does not exist.");
                 return;
         }
-        watcher =  watcherRepository.save(watcher);
+        watcher = watcherRepository.save(watcher);
         message.respond("Set " + arguments.get(1) + " to " + arguments.get(3) + " of watcher " + watcher.getName());
         checkWatcher(watcher);
     }
@@ -185,8 +185,9 @@ public class WatcherService {
     @Scheduled(fixedDelay = 10 * 1000, initialDelay = 10 * 1000)
     public void watchForDowntimes() {
 
-        watcherRepository.findAll().stream().filter(watcher -> new Date().getTime() - watcher.getLastChecked().getTime() >= (watcher.getSecondsBetweenChecks()) * 1000)
-        .forEach(this::checkWatcher);
+        watcherRepository.findAll().stream()
+                .filter(watcher -> watcher.getTimesFailed() == 1 || new Date().getTime() - watcher.getLastChecked().getTime() >= (watcher.getSecondsBetweenChecks()) * 1000)
+                .forEach(this::checkWatcher);
 
     }
 
