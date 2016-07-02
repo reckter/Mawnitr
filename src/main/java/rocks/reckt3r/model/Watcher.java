@@ -18,6 +18,8 @@ public class Watcher {
 
     String name;
 
+    int timesFailed;
+
     @OneToOne
     User user;
 
@@ -38,6 +40,14 @@ public class Watcher {
 
     Status status;
 
+
+    public int getTimesFailed() {
+        return timesFailed;
+    }
+
+    public void setTimesFailed(int timesFailed) {
+        this.timesFailed = timesFailed;
+    }
 
     public Status getStatus() {
         return status;
