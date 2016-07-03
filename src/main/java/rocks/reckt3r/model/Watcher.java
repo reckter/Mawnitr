@@ -18,8 +18,6 @@ public class Watcher {
 
     String name;
 
-    int timesFailed;
-
     @OneToOne
     User user;
 
@@ -39,6 +37,8 @@ public class Watcher {
     String lastMessage;
 
     Status status;
+
+    int timesFailed;
 
 
     public int getTimesFailed() {
