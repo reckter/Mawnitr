@@ -262,10 +262,10 @@ public class WatcherService {
         watcher.setLastMessage(code + "\n body: " + body);
 
         if(code == watcher.getExpectedStatus()) {
-            watcher.setTimesFailed(0);
-            if(watcher.getStatus() == Status.OFFLINE) {
+            if(watcher.getStatus() == Status.OFFLINE && watcher.getTimesFailed() > 1) {
                 sendIsOkAgainMessage(watcher);
             }
+            watcher.setTimesFailed(0);
             watcher.setLastSuccessAt(watcher.getLastChecked());
             watcher.setStatus(Status.ONLINE);
         } else {
