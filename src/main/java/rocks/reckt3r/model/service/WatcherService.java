@@ -195,6 +195,7 @@ public class WatcherService {
         AsyncRestTemplate restTemplate = new AsyncRestTemplate();
 
         watcher.setLastChecked(new Date());
+        watcher.setTimesFailed(watcher.getTimesFailed() + 1);
         watcher = watcherRepository.save(watcher);
 
         HttpEntity<String> entity = new HttpEntity<>("");
@@ -212,21 +213,18 @@ public class WatcherService {
 
                 finalWatcher.setLastChecked(new Date());
                 finalWatcher.setLastMessage("Timeout");
-                finalWatcher.setStatus(Status.OFFLINE);
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
 
             } else if(ex instanceof SSLHandshakeException) {
                 finalWatcher.setLastChecked((new Date()));
                 finalWatcher.setLastMessage("SSL certificate error. Check Your SSL certificate: " + ex.getMessage());
-                finalWatcher.setStatus(Status.OFFLINE);
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
             } else {
 
                 finalWatcher.setLastChecked((new Date()));
                 finalWatcher.setLastMessage(ex.getClass().getSimpleName() + ": " + ex.getMessage());
-                finalWatcher.setStatus(Status.OFFLINE);
                 sendErrorMessage(finalWatcher);
                 watcherRepository.save(finalWatcher);
             }
@@ -236,7 +234,6 @@ public class WatcherService {
 
 
     private void sendErrorMessage(Watcher watcher) {
-        watcher.setTimesFailed(watcher.getTimesFailed() + 1);
         if(watcher.getTimesFailed() > 1) {
             if(watcher.getLastWarned() == null) {
                 watcher.setLastWarned(new Date(0));
@@ -246,7 +243,9 @@ public class WatcherService {
                 telegram.sendMessage(watcher.getUser().getTelegramId(), "==== Server down ==== \n \nGot an error while checking " + watcher.getName() + "\n" +
                         "last successfull message: " + ((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000) + "s ago \n" +
                         watcher.getLastMessage());
+                watcher.setStatus(Status.OFFLINE);
             }
+
         }
     }
 
@@ -270,7 +269,6 @@ public class WatcherService {
             watcher.setStatus(Status.ONLINE);
         } else {
             sendErrorMessage(watcher);
-            watcher.setStatus(Status.OFFLINE);
         }
 
         watcherRepository.save(watcher);
