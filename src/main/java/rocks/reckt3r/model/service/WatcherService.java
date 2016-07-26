@@ -186,7 +186,15 @@ public class WatcherService {
     public void watchForDowntimes() {
 
         watcherRepository.findAll().stream()
-                .filter(watcher -> watcher.getTimesFailed() == 1 || new Date().getTime() - watcher.getLastChecked().getTime() >= (watcher.getSecondsBetweenChecks()) * 1000)
+                .filter(watcher -> watcher.getTimesFailed() == 1 || (watcher.getTimesFailed() == 0 && new Date().getTime() - watcher.getLastChecked().getTime() >= (watcher.getSecondsBetweenChecks()) * 1000))
+                .forEach(this::checkWatcher);
+
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    public void watchForUpAgain() {
+        watcherRepository.findAll().stream().parallel()
+                .filter(watcher -> watcher.getTimesFailed() > 1)
                 .forEach(this::checkWatcher);
 
     }
@@ -238,7 +246,8 @@ public class WatcherService {
             if(watcher.getLastWarned() == null) {
                 watcher.setLastWarned(new Date(0));
             }
-            if(new Date().getTime() - watcher.getLastWarned().getTime() > 20 * 60 * 1000 || watcher.getStatus() == Status.ONLINE) {
+            long timeSinceLastwarn = new Date().getTime() - watcher.getLastWarned().getTime();
+            if((timeSinceLastwarn  > 20 * 60 * 1000 && timeSinceLastwarn > watcher.getSecondsBetweenChecks() * 1000) || watcher.getStatus() == Status.ONLINE) {
                 watcher.setLastWarned(new Date());
                 telegram.sendMessage(watcher.getUser().getTelegramId(), "==== Server down ==== \n \nGot an error while checking " + watcher.getName() + "\n" +
                         "last successfull message: " + ((new Date().getTime() - watcher.getLastSuccessAt().getTime()) / 1000) + "s ago \n" +
