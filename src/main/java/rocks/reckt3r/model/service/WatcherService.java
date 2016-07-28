@@ -191,7 +191,7 @@ public class WatcherService {
 
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 10 * 1000)
     public void watchForUpAgain() {
         watcherRepository.findAll().stream().parallel()
                 .filter(watcher -> watcher.getTimesFailed() > 1)
