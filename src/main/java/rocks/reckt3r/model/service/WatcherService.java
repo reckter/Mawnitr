@@ -8,6 +8,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.AsyncClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsAsyncClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -199,8 +201,15 @@ public class WatcherService {
 
     }
 
+    private AsyncClientHttpRequestFactory clientHttpRequestFactory() {
+        HttpComponentsAsyncClientHttpRequestFactory factory = new HttpComponentsAsyncClientHttpRequestFactory();
+        factory.setReadTimeout(2000);
+        factory.setConnectTimeout(2000);
+        return factory;
+    }
+
     public void checkWatcher(Watcher watcher) {
-        AsyncRestTemplate restTemplate = new AsyncRestTemplate();
+        AsyncRestTemplate restTemplate = new AsyncRestTemplate(clientHttpRequestFactory());
 
         watcher.setLastChecked(new Date());
         watcher.setTimesFailed(watcher.getTimesFailed() + 1);
